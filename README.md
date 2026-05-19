@@ -45,7 +45,10 @@ src/
 ├── lib/
 │   ├── health.ts     HealthKit 래퍼
 │   ├── supabase.ts   Supabase 클라이언트
-│   └── macaron.ts    마일스톤 계산 로직
+│   ├── macaron.ts    걸음/계단 마일스톤
+│   ├── rewards.ts    출석 + 광고 보상
+│   ├── tier.ts       등급 임계값 + 승급 감지
+│   └── season.ts     마당 시즈널/시간대 (USP)
 ├── stores/userStore.ts
 ├── hooks/useHealth.ts
 └── types/index.ts
@@ -67,11 +70,46 @@ supabase/
 
 헤비 유저 일일 최대치 = 1 + 1 + 2 + 5 + 1 + 10 = **20 마카롱**
 
+## 등급 시스템
+
+`lifetime_steps`에 따라 자동 승급 (DB trigger). 솔로 개발자 추후 밸런싱.
+
+| 등급 | 누적 걸음 |
+|---|---|
+| 천막 (tent) | 0 |
+| 오두막 (cabin) | 100,000 |
+| 마당집 (yard_house) | 500,000 |
+| 빌라 (villa) | 1,500,000 |
+| 아파트 (apartment) | 3,500,000 |
+| 저택 (mansion) | 7,000,000 |
+
+## 시즈널 마당
+
+클라이언트 로컬 시간으로 매 렌더 계산.
+
+| 구분 | 범위 |
+|---|---|
+| 봄 (벚꽃) | 3-5월 |
+| 여름 | 6-8월 |
+| 가을 (단풍) | 9-11월 |
+| 겨울 (눈) | 12-2월 |
+| 아침 | 05-11시 |
+| 낮 | 12-17시 |
+| 저녁 | 18-20시 |
+| 밤 | 21-04시 |
+
 ## Done 기준 (Phase 0)
 
-- [ ] 실기기 빌드 OK
+검증됨 (컨테이너):
+- [x] 모든 순수 로직 단위 테스트 50개 통과 (`npm test`)
+- [x] TypeScript 클린 (`npm run typecheck`)
+- [x] DB 스키마 (RLS, trigger, 등급 자동 동기화)
+
+실기기에서 확인 필요:
 - [ ] HealthKit 권한 + 걸음/계단/거리 표시
 - [ ] 1000/5000/10000보 + 10층 마일스톤 적립
 - [ ] 같은 날 새로고침해도 중복 적립 X
+- [ ] 출석 보상 1회/일
+- [ ] 광고 mock 10회/일 캡
+- [ ] 등급업 자동 (DB trigger)
 - [ ] `daily_activity` upsert + `profiles.macaron_balance` 누적
-- [ ] `profiles.lifetime_steps` 누적 (등급업 준비)

@@ -1,12 +1,5 @@
-// 마카롱 적립 규칙 (v2):
-// 출석: 1 (Phase 1+ 구현, 여기선 자리만)
-// 1000보 도달: 1 (1회/일)
-// 5000보 도달: 2 (1회/일)
-// 10000보 도달: 5 (1회/일)
-// 10층 도달: 1 (1회/일)
-// 광고 시청: 1 (1회당, 최대 10회/일, Phase 1+ 구현)
-
-export const DAILY_AD_LIMIT = 10;
+// 걸음/계단 마일스톤 (1회/일).
+// 출석/광고 보상은 src/lib/rewards.ts.
 
 export const STEP_MILESTONES = [
   { key: 'steps_1000', threshold: 1000, reward: 1 },
