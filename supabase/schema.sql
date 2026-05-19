@@ -64,6 +64,39 @@ create policy "own activity" on public.daily_activity
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 -- ────────────────────────────────────────────────────────────
+-- Tier auto-sync from lifetime_steps
+-- ────────────────────────────────────────────────────────────
+create or replace function public.tier_for_lifetime_steps(steps bigint)
+returns tier_level
+language sql
+immutable
+as $$
+  select case
+    when steps >= 7000000 then 'mansion'::tier_level
+    when steps >= 3500000 then 'apartment'::tier_level
+    when steps >= 1500000 then 'villa'::tier_level
+    when steps >= 500000  then 'yard_house'::tier_level
+    when steps >= 100000  then 'cabin'::tier_level
+    else 'tent'::tier_level
+  end;
+$$;
+
+create or replace function public.update_tier_on_profile()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.current_tier := public.tier_for_lifetime_steps(new.lifetime_steps);
+  return new;
+end;
+$$;
+
+drop trigger if exists profile_tier_sync on public.profiles;
+create trigger profile_tier_sync
+  before insert or update of lifetime_steps on public.profiles
+  for each row execute procedure public.update_tier_on_profile();
+
+-- ────────────────────────────────────────────────────────────
 -- Auto-create profile on signup (including anonymous)
 -- ────────────────────────────────────────────────────────────
 create or replace function public.handle_new_user()
