@@ -98,6 +98,29 @@ supabase/
 | 저녁 | 18-20시 |
 | 밤 | 21-04시 |
 
+## 픽셀 아트 시안 (placeholder)
+
+Python/PIL로 자동 생성. 실제 게임에선 픽셀 아티스트 작업물로 교체.
+
+```bash
+# 모든 시안 재생성
+python3 assets/scripts/render_yard.py        # 96 마당 (6 등급 × 4 계절 × 4 시간대)
+python3 assets/scripts/render_character.py   # 캐릭터 9슬롯 + 4 프리셋
+python3 assets/scripts/render_icons.py       # 20 UI/마일스톤/등급 아이콘
+```
+
+**구조:**
+```
+assets/
+├── scripts/        Python 렌더러 (수정 → 일괄 재생성)
+├── yard/{tier}/{season}_{daypart}.png   64×64 (8x 스케일)
+├── character/parts/{slot}_{key}.png     32×48
+├── character/composed/{preset}.png      32×48 프리셋
+└── icons/{name}.png + {name}@16x.png    16×16 (원본 + 16배 확대)
+```
+
+각 그리드 시안: `assets/yard/_overview_tiers.png`, `assets/character/_overview.png`, `assets/icons/_overview.png`.
+
 ## Done 기준 (Phase 0)
 
 검증됨 (컨테이너):
